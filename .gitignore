@@ -1,0 +1,16 @@
+.build
+.mbed
+projectfiles
+*.py*
+mbed-os
+BUILD
+
+
+mbed-os.lib
+
+
+bugzoo-u8g2.lib
+bugzoo-u8g2/
+
+libboxzoo.lib
+libboxzoo/
