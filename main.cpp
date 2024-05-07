@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <cstdio>
 
+// TODO
 # define HEATING_TEMP 21
 # define POLICE_LIGHT_THRESHOLD 0
 
@@ -20,21 +21,42 @@ void display_message(char* message) {
 
 }
 
+// Conditional functions
 float get_outside_temp() {
     uint16_t analog_in_value = adc_read(0);
     float voltage = analog_in_value * 3 / 65535.0 ;
     return (voltage * 1000 - 400) / 19.5 ;
 }
 
-bool police_arrived(DigitalIn car_sensor) {
+bool police_arrived() {
+    DigitalIn car_sensor(PTE25);
     uint16_t outdoor_light_sensor = adc_read(1);
     return !car_sensor && outdoor_light_sensor >= POLICE_LIGHT_THRESHOLD;
 }
 
-bool heat() {
-    return get_outside_temp() > HEATING_TEMP;
+// Output functions
+void blink_inside_light(PwmOut *inside_light) {
+    *inside_light = 1;
+    ThisThread::sleep_for(500ms);
+    *inside_light = 0;
 }
 
+void blink_led(DigitalOut *led) {
+    *led = 1;
+    ThisThread::sleep_for(500ms);
+    *led = 0;
+}
+
+void heat_or_cool(PwmOut *heater, DigitalOut *ventilator) {
+    if (get_outside_temp() >= HEATING_TEMP) {
+        *heater = 1;
+        *ventilator = 0;
+    }
+    else {
+        *heater = 0;
+        *ventilator = 1;
+    }
+}
 
 
 // main() runs in its own thread in the OS
@@ -51,7 +73,6 @@ int main()
     // INPUT
     DigitalIn emergency_button_released(PTB5);
 
-    DigitalIn car_sensor(PTE25);
     //uint16_t temp_sensor = adc_read(0);
     //uint16_t outdoor_light_sensor = adc_read(1);
 
@@ -79,21 +100,45 @@ int main()
     // pwm2.write (0.5);
     // pwm2.period_ms(10);
     bool emergency = false;
+    front_door = 0;
+    garage_door = 0;
+    curtain = 0;
+    inside_light = 0;
+    heater = 0;
+    ventilator = 0;
+
 
     while (true) {
-        // printf("emergency %d\n", emergency);
-        // printf("emergency_button_released %d\n", (int) emergency_button_released);
-        // printf("police arrived %d\n", police_arrived(car_sensor));
-
-        if (!emergency && !emergency_button_released && !police_arrived(car_sensor)) emergency = true;
+        if (!emergency_button_released && !police_arrived()) emergency = true;
         
+        if (police_arrived()) {
+            char msg[] = "Police arrived!";
+            printf("%s\n", msg);
+            display_message(msg);
 
-        if (emergency) printf("emergency\n");
-        else printf("no emergency\n");
-
-        ThisThread::sleep_for(500ms);
-
-
-
+            emergency = false;
+            front_door = 0;
+            garage_door = 0;
+            curtain = 0;
+            inside_light = 1;
+            heater = 0;
+            ventilator = 0;
+        } else if (emergency) {
+            char msg[] = "EMERGENCY!!!";
+            printf("%s\n", msg);
+            display_message(msg);
+            
+            front_door = 1;
+            garage_door = 1;
+            curtain = 1;
+            blink_inside_light(&inside_light);
+            blink_led(&red_led);
+            heat_or_cool(&heater, &ventilator);
+        }
+        else {
+            char msg[] = "No police and no emergency :)";
+            printf("%s\n", msg);
+            display_message(msg);
+        }
     }
 }
