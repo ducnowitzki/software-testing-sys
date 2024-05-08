@@ -50,9 +50,7 @@ void heat_or_cool(PwmOut *heater, DigitalOut *ventilator, DigitalOut *mux1, Digi
     float outside_temp= get_temp();
     *mux1 = 0;
     *mux2 = 1;
-
-    *mux1 = 0;
-    *mux2 = 1;
+    
     float heater_temp = get_temp();
 
     *mux1 = 1;
