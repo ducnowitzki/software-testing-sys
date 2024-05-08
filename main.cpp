@@ -45,9 +45,19 @@ void blink_led(DigitalOut *led) {
     *led = 0;
 }
 
-void heat_or_cool(PwmOut *heater, DigitalOut *ventilator) {
+void heat_or_cool(PwmOut *heater, DigitalOut *ventilator, DigitalOut *mux1, DigitalOut *mux2) {
+    float outside_temp= get_temp();
+    *mux1 = 0;
+    *mux2 = 1;
 
-    if (get_temp() >= HEATING_TEMP) {
+    float heater_temp = get_temp();
+
+    *mux1 = 1;
+    *mux2 = 0;
+
+    printf("heater temp %d\n", (int) heater_temp);
+
+    if (outside_temp >= HEATING_TEMP) {
         *heater = 1;
         *ventilator = 0;
     }
@@ -151,7 +161,7 @@ int main()
             blink_light(&inside_light);
             blink_light(&garage_light);
             blink_led(&red_led);
-            heat_or_cool(&heater, &ventilator);
+            heat_or_cool(&heater, &ventilator, &mux1, &mux2);
             // heater = 1;
             // ventilator = 0;
         }
