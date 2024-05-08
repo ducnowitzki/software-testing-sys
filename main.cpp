@@ -7,7 +7,7 @@
 #include <cstdio>
 
 // TODO
-# define HEATING_TEMP 26
+# define HEATING_TEMP 27
 # define MAX_HEATING_TEMP 60
 # define POLICE_LIGHT_THRESHOLD 40000
 
