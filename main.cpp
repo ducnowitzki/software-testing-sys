@@ -7,7 +7,7 @@
 #include <cstdio>
 
 // TODO
-# define HEATING_TEMP 30
+# define HEATING_TEMP 27
 # define POLICE_LIGHT_THRESHOLD 40000
 
 void display_message(char* message) {
