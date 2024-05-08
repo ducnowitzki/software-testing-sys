@@ -48,16 +48,11 @@ void blink_led(DigitalOut *led) {
 
 void heat_or_cool(PwmOut *heater, DigitalOut *ventilator, DigitalOut *mux1, DigitalOut *mux2) {
     float outside_temp= get_temp();
-<<<<<<< HEAD
     *mux1 = 0;
     *mux2 = 1;
 
-=======
-
     *mux1 = 0;
     *mux2 = 1;
-
->>>>>>> added bug
     float heater_temp = get_temp();
 
     *mux1 = 1;
@@ -109,7 +104,6 @@ int main()
     mux2 = 0;
 
     bool emergency = false;
-
     // front_door = 0;
     // garage_door = 1;
     // curtain = 0;
@@ -136,7 +130,6 @@ int main()
             heater = 0;
             ventilator = 0;
         } else if (emergency) {
-            
             float temp = get_temp();
             char msg[100];
 
