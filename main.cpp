@@ -8,7 +8,7 @@
 
 // TODO
 # define HEATING_TEMP 27
-# define MAX_HEATING_TEMP 60
+# define MAX_HEATING_TEMP 50
 # define POLICE_LIGHT_THRESHOLD 40000
 
 void display_message(char* message) {
@@ -29,7 +29,7 @@ float get_temp() {
 bool police_arrived() {
     DigitalIn car_sensor(PTE25);
     uint16_t outdoor_light_sensor = adc_read(1);
-    printf("light level: %d\n", outdoor_light_sensor);
+    // printf("light level: %d\n", outdoor_light_sensor);
     return !car_sensor && outdoor_light_sensor >= POLICE_LIGHT_THRESHOLD;
 }
 
@@ -50,13 +50,13 @@ void heat_or_cool(PwmOut *heater, DigitalOut *ventilator, DigitalOut *mux1, Digi
     float outside_temp= get_temp();
     *mux1 = 0;
     *mux2 = 1;
-    
+
     float heater_temp = get_temp();
 
     *mux1 = 1;
     *mux2 = 0;
 
-    printf("heater temp %d\n", (int) heater_temp);
+    // printf("heater temp %d\n", (int) heater_temp);
     if (outside_temp >= HEATING_TEMP && heater_temp <= MAX_HEATING_TEMP) {
         *heater = 1;
         *ventilator = 0;
@@ -117,7 +117,7 @@ int main()
         
         if (police_arrived()) {
             char msg[] = "Police arrived!";
-            printf("%s\n", msg);
+            // printf("%s\n", msg);
             display_message(msg);
 
             emergency = false;
@@ -133,13 +133,13 @@ int main()
 
             if (temp >= HEATING_TEMP) {
                 sprintf(msg, "EMERGENCY!!! HEATING MODE");
-                printf("EMERGENCY!!! HEATING MODE, temp: %d\n", (int) temp);
+                // printf("EMERGENCY!!! HEATING MODE, temp: %d\n", (int) temp);
             }
             else {
                 sprintf(msg, "EMERGENCY!!! COOLING MODE");
-                printf("EMERGENCY!!! COOLING MODE, temp: %d\n", (int) temp);
+                // printf("EMERGENCY!!! COOLING MODE, temp: %d\n", (int) temp);
             }
-            printf("EMERGENCY!!! \n");
+            // printf("EMERGENCY!!! \n");
             display_message(msg);
             
             front_door = 1;
@@ -155,7 +155,7 @@ int main()
         else {
             char msg[] = "No police and no emergency :)";
             
-            printf("%s\n", msg);
+            // printf("%s\n", msg);
             display_message(msg);
 
             // front_door = 0;
