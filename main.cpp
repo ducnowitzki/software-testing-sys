@@ -8,6 +8,7 @@
 
 // TODO
 # define HEATING_TEMP 27
+# define MAX_HEATING_TEMP 60
 # define POLICE_LIGHT_THRESHOLD 40000
 
 void display_message(char* message) {
@@ -47,17 +48,23 @@ void blink_led(DigitalOut *led) {
 
 void heat_or_cool(PwmOut *heater, DigitalOut *ventilator, DigitalOut *mux1, DigitalOut *mux2) {
     float outside_temp= get_temp();
+<<<<<<< HEAD
     *mux1 = 0;
     *mux2 = 1;
 
+=======
+
+    *mux1 = 0;
+    *mux2 = 1;
+
+>>>>>>> added bug
     float heater_temp = get_temp();
 
     *mux1 = 1;
     *mux2 = 0;
 
     printf("heater temp %d\n", (int) heater_temp);
-
-    if (outside_temp >= HEATING_TEMP) {
+    if (outside_temp >= HEATING_TEMP && heater_temp <= MAX_HEATING_TEMP) {
         *heater = 1;
         *ventilator = 0;
     }
@@ -82,9 +89,6 @@ int main()
     // INPUT
     DigitalIn emergency_button_released(PTB5);
 
-    //uint16_t temp_sensor = adc_read(0);
-    //uint16_t outdoor_light_sensor = adc_read(1);
-
     // OUTPUT
     DigitalOut front_door(PTE24);
     DigitalOut garage_door(PTB11);
@@ -94,8 +98,6 @@ int main()
 
     // Freedom controller LED
     DigitalOut red_led(PTB2);
-    // DigitalOut green_led(PTB3);
-    // DigitalOut blue_led(PTB4);
 
     PwmOut heater(PTA7);
     DigitalOut ventilator(PTC12);
@@ -106,15 +108,8 @@ int main()
     mux1 = 1;
     mux2 = 0;
 
-    // unsigned int pwm_min=580;
-
-    // pwm0.write (0.5);
-    // pwm0.period_ms(10);
-    // pwm1.write (0.5);
-    // pwm1.period_ms(10);  
-    // pwm2.write (0.5);
-    // pwm2.period_ms(10);
     bool emergency = false;
+
     // front_door = 0;
     // garage_door = 1;
     // curtain = 0;
@@ -141,6 +136,7 @@ int main()
             heater = 0;
             ventilator = 0;
         } else if (emergency) {
+            
             float temp = get_temp();
             char msg[100];
 
