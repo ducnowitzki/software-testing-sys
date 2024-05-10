@@ -47,13 +47,16 @@ void blink_led(DigitalOut *led) {
 }
 
 void heat_or_cool(PwmOut *heater, DigitalOut *ventilator, DigitalOut *mux1, DigitalOut *mux2) {
+    // to get outside_temp
+    *mux1 = 1;
+    *mux2 = 0;
     float outside_temp= get_temp();
     *mux1 = 0;
     *mux2 = 1;
 
     float heater_temp = get_temp();
-
-    *mux1 = 1;
+    // set default to indoor temperature sensor
+    *mux1 = 0;
     *mux2 = 0;
 
     // printf("heater temp %d\n", (int) heater_temp);
@@ -98,7 +101,8 @@ int main()
     // Use outside temperature sensor
     DigitalOut mux1(PTA8);
     DigitalOut mux2(PTA9);
-    mux1 = 1;
+    // indoor temperature sensor mux setting
+    mux1 = 0;
     mux2 = 0;
 
     bool emergency = false;
@@ -132,11 +136,11 @@ int main()
             char msg[100];
 
             if (temp >= HEATING_TEMP) {
-                sprintf(msg, "EMERGENCY!!! HEATING MODE");
+                sprintf(msg, "EMERGENCY!!! HEATING MODE, Outdoor temp: %d\n", (int) temp);
                 // printf("EMERGENCY!!! HEATING MODE, temp: %d\n", (int) temp);
             }
             else {
-                sprintf(msg, "EMERGENCY!!! COOLING MODE");
+                sprintf(msg, "EMERGENCY!!! COOLING MODE, Outdoor temp: %d\n", (int) temp);
                 // printf("EMERGENCY!!! COOLING MODE, temp: %d\n", (int) temp);
             }
             // printf("EMERGENCY!!! \n");
