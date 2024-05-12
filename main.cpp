@@ -8,7 +8,7 @@
 
 // TODO
 # define HEATING_TEMP 27
-# define MAX_HEATING_TEMP 50
+# define MAX_HEATING_TEMP 35
 # define POLICE_LIGHT_THRESHOLD 40000
 
 void display_message(char* message) {
@@ -62,7 +62,7 @@ void heat_or_cool(PwmOut *heater, DigitalOut *ventilator, DigitalOut *mux1, Digi
     // printf("heater temp %d\n", (int) heater_temp);
     if (outside_temp >= HEATING_TEMP && heater_temp <= MAX_HEATING_TEMP) {
         *heater = 1;
-        *ventilator = 0;
+        *ventilator = 1;
     }
     else {
         *heater = 0;
